@@ -1,5 +1,7 @@
 // ignore_for_file: unused_field, prefer_is_empty, prefer_const_constructors, unused_import
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:home_security/detailsscreen.dart';
 import 'package:home_security/historyscreen.dart';
@@ -15,12 +17,22 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isAlarmEnabled = false;
   int _normalStatus = 1;
   var sensorStatuses = [];
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
     _fetchAlarmStatus();
     _fetchSensorStatuses();
+    _timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
+      _fetchSensorStatuses();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   Future<void> _fetchAlarmStatus() async {
@@ -38,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _fetchSensorStatuses() async {
     try {
       final alarmStatus = await ApiService.fetchSensorStatuses();
+      print("-----------------");
       setState(() {
         sensorStatuses = alarmStatus;
       });
@@ -84,21 +97,33 @@ class _HomeScreenState extends State<HomeScreen> {
                     title:
                         'Door 1 : ${sensorStatuses.length == 0 ? 'No attempt' : sensorStatuses[0]['status'] == 0 ? 'No attempt' : 'Attempt'}',
                     icon: Icons.door_front_door,
+                    status: sensorStatuses.length == 0
+                        ? 0
+                        : sensorStatuses[0]['status'],
                     onTap: () => _navigateToDetailScreen(context, 1)),
                 DoorCard(
                     title:
                         'Door 2 : ${sensorStatuses.length == 0 ? 'No attempt' : sensorStatuses[1]['status'] == 0 ? 'No attempt' : 'Attempt'}',
                     icon: Icons.door_front_door,
+                    status: sensorStatuses.length == 0
+                        ? 0
+                        : sensorStatuses[1]['status'],
                     onTap: () => _navigateToDetailScreen(context, 2)),
                 DoorCard(
                     title:
                         'Door 3 : ${sensorStatuses.length == 0 ? 'No attempt' : sensorStatuses[2]['status'] == 0 ? 'No attempt' : 'Attempt'}',
                     icon: Icons.door_front_door,
+                    status: sensorStatuses.length == 0
+                        ? 0
+                        : sensorStatuses[2]['status'],
                     onTap: () => _navigateToDetailScreen(context, 3)),
                 DoorCard(
                     title:
                         'Door 4 : ${sensorStatuses.length == 0 ? 'No attempt' : sensorStatuses[3]['status'] == 0 ? 'No attempt' : 'Attempt'}',
                     icon: Icons.door_front_door,
+                    status: sensorStatuses.length == 0
+                        ? 0
+                        : sensorStatuses[3]['status'],
                     onTap: () => _navigateToDetailScreen(context, 4)),
                 DoorCard(
                     title: 'History',
@@ -159,9 +184,13 @@ class DoorCard extends StatelessWidget {
   final String title;
   final IconData icon;
   final VoidCallback onTap;
+  final status;
 
   const DoorCard(
-      {required this.title, required this.icon, required this.onTap});
+      {required this.title,
+      required this.icon,
+      required this.onTap,
+      this.status});
 
   @override
   Widget build(BuildContext context) {
@@ -173,7 +202,11 @@ class DoorCard extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 48.0),
+              Icon(
+                icon,
+                size: 48.0,
+                color: status == 1 ? Colors.red : Colors.black,
+              ),
               SizedBox(height: 16.0),
               Text(title),
             ],

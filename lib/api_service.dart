@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String baseUrl = 'http://192.168.206.193:8000'; // Replace with your Django API base URL
+  static const String baseUrl = 'http://192.168.111.193:8000'; // Replace with your Django API base URL
 
   // Fetch intruder attempts
   static Future<List<dynamic>> fetchIntruderAttempts() async {
