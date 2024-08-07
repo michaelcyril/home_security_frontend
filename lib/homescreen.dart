@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:home_security/detailscreen.dart';
 import 'package:home_security/detailsscreen.dart';
 import 'package:home_security/historyscreen.dart';
 import 'package:home_security/profilescreen.dart';
@@ -174,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => DetailScreen(doorNumber: doorNumber),
+        builder: (context) => DetailImageScreen(doorNumber: doorNumber),
       ),
     );
   }
